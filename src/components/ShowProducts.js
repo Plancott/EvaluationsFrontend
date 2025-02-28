@@ -3,10 +3,13 @@ import axios from 'axios'
 import Swal from 'sweetalert2'
 import withReactContent from 'sweetalert2-react-content'
 import { showAlert } from '../functions'
+import { useNavigate } from "react-router-dom"
 
 const ShowProducts = () => {
     const url = 'http://localhost:8080/products/v1/api';
     const categoryUrl = 'http://localhost:8080/category/v1/api';
+    const navigate = useNavigate();
+
 
     const [products, setProducts] = useState([]);
     const [categories, setCategories] = useState([]);
@@ -182,9 +185,15 @@ const ShowProducts = () => {
 
     return (
         <div className='App'>
-            <div className='container-fluid'>
-                <div className='row mt-3'>
-                    <div className='col-md-4'>
+            <div className='container mt-3'>
+                <div className='d-grid mx-auto mb-3'>
+                    <button className='btn btn-dark' onClick={() => openModal(1)} data-bs-toggle='modal' data-bs-target='#modalProducts'>
+                        <i className='fa-solid fa-circle-plus'></i> Add Product
+                    </button>
+                </div>
+
+                <div className='row mb-3'>
+                    <div className='col-md-6'>
                         <input
                             type='text'
                             className='form-control'
@@ -193,8 +202,7 @@ const ShowProducts = () => {
                             onChange={(e) => handleFilters(e.target.value, selectedCategory)}
                         />
                     </div>
-
-                    <div className='col-md-4'>
+                    <div className='col-md-6'>
                         <select
                             className='form-control'
                             value={selectedCategory}
@@ -206,68 +214,56 @@ const ShowProducts = () => {
                             ))}
                         </select>
                     </div>
-                    <div className='col-md-4'>
-                        <div className='d-grid mx-auto'>
-                            <button
-                                onClick={() => openModal(1)}
-                                className='btn btn-dark'
-                                data-bs-toggle='modal'
-                                data-bs-target='#modalProducts'
-                            >
-                                <i className='fa-solid fa-circle-plus'></i> Add Product
-                            </button>
-                        </div>
-                    </div>
                 </div>
 
-                <div className='row mt-3'>
-                    <div className='col-12 col-lg-8 offset-lg-2'>
-                        <div className='table-responsive'>
-                            <table className='table table-borderer'>
-                                <thead>
-                                    <tr>
-                                        <th>Id</th>
-                                        <th>Name</th>
-                                        <th>Price</th>
-                                        <th>Stock</th>
-                                        <th>Category</th>
-                                        <th>Actions</th>
-                                    </tr>
-                                </thead>
-                                <tbody className='table-group-divider'>
-                                    {products.map((product) => (
-                                        <tr key={product.id}>
-                                            <td>{product.id}</td>
-                                            <td>{product.name}</td>
-                                            <td>${new Intl.NumberFormat('es-mx').format(product.price)}</td>
-                                            <td>{product.stock}</td>
-                                            <td>{product.category?.name}</td>
-                                            <td>
-                                                <button
-                                                    className='btn btn-warning'
-                                                    onClick={() =>
-                                                        openModal(2, product.id, product.name, product.price, product.stock, product.category?.id)
-                                                    }
-                                                    data-bs-toggle='modal'
-                                                    data-bs-target='#modalProducts'
-                                                >
-                                                    <i className='fa-solid fa-edit'></i>
-                                                </button>
-                                                &nbsp;&nbsp;&nbsp;
-                                                <button className='btn btn-danger' onClick={() => { deleteProduct(product.id) }}>
-                                                    <i className='fa-solid fa-trash'></i>
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+                <div className='table-responsive'>
+                    <table className='table table-bordered'>
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Name</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Category</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {products.map((product) => (
+                                <tr key={product.id}>
+                                    <td>{product.id}</td>
+                                    <td>{product.name}</td>
+                                    <td>${new Intl.NumberFormat('es-mx').format(product.price)}</td>
+                                    <td>{product.stock}</td>
+                                    <td>{product.category?.name}</td>
+                                    <td>
+                                        <button
+                                            className='btn btn-warning'
+                                            onClick={() => openModal(2, product.id, product.name, product.price, product.stock, product.category?.id)}
+                                            data-bs-toggle='modal'
+                                            data-bs-target='#modalProducts'
+                                        >
+                                            <i className='fa-solid fa-edit'></i>
+                                        </button>
+                                        &nbsp;
+                                        <button className='btn btn-danger' onClick={() => deleteProduct(product.id)}>
+                                            <i className='fa-solid fa-trash'></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
                 </div>
+
+                <div className='d-grid mx-auto mt-3'>
+                    <button className='btn btn-primary' onClick={() => window.location.href = '/categories'}>
+                        Go to Categories   <i className='fa-solid fa-arrow-right'></i> 
+                    </button>
+                </div>
+
             </div>
 
-            {/* Modal */}
             <div id='modalProducts' className='modal fade' aria-hidden='true'>
                 <div className='modal-dialog'>
                     <div className='modal-content'>
@@ -346,6 +342,8 @@ const ShowProducts = () => {
                     </div>
                 </div>
             </div>
+
+
         </div>
     );
 };
